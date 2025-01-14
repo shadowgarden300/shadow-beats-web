@@ -3,7 +3,7 @@ import { FaSearch } from 'react-icons/fa';
 
 const Navbar: React.FC = () => {
   return (
-    <nav className="fixed top-0 left-0 w-full h-16 bg-purple-900 text-white z-50">
+    <nav className="fixed top-0 left-0 w-full h-16 bg-gray-900">
      
       <div className="flex items-center justify-center h-full">
         
@@ -12,7 +12,7 @@ const Navbar: React.FC = () => {
           <input
             type="text"
             placeholder="Search"
-            className="w-full p-2 pl-10 rounded-full text-black bg-white shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-2 pl-10 rounded-full text-white bg-gray-800 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500"
           />
           <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" />
         </div>

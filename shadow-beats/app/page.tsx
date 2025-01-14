@@ -10,7 +10,7 @@ const Home: React.FC  = async () => {
   const koreanHits = await fetchPlayListSongs("K-HITLIST");
   const recent = (await fetchPlayListSongs("The+Hit+List")).slice(0,3);
   return (
-    <div className="bg-purple-900 text-white min-h-screen">
+    <div className="bg-gray-800 text-white min-h-screen">
       <Navbar />
       <Sidebar />
       <main className="ml-16 pt-16 px-6">
@@ -18,12 +18,7 @@ const Home: React.FC  = async () => {
         <Songs songs={globalHits} title={"Global Hits"}/>
         <Songs songs={koreanHits} title={"Korean Hits"}/>
         <Songs songs={bollywoodHits} title={"Blollywood Hits"}/>
-        
-        
-        //bollywood hits 
-        // RecentlyPlayed
-        //recommended
-        // korean hits
+        {/* recommended */}
       </main>
     </div>
   );
