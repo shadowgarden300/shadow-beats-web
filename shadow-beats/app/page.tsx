@@ -3,6 +3,9 @@ import Navbar from './components/NavBar';
 import Sidebar from './components/SideBar';
 import Songs from './components/Songs';
 import { fetchPlayListSongs } from './src/FetchPlayListSongs';
+import Play from './components/Play';
+
+
 
 const Home: React.FC  = async () => {
   const globalHits = await fetchPlayListSongs("The+Hit+List");
@@ -17,9 +20,12 @@ const Home: React.FC  = async () => {
         <Songs songs={recent} title={"Recently played"}/>
         <Songs songs={globalHits} title={"Global Hits"}/>
         <Songs songs={koreanHits} title={"Korean Hits"}/>
-        <Songs songs={bollywoodHits} title={"Blollywood Hits"}/>
-        {/* recommended */}
+        <Songs songs={bollywoodHits} title={"Blollywood Hits"}/> 
+        {/* <Song videoId='eVli-tstM5E' /> */}
+        
+       
       </main>
+      {/* <Play videoId='eVli-tstM5E'/> */}
     </div>
   );
 };

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 import { FaHome, FaCog, FaList, FaPlusSquare } from 'react-icons/fa';
 
@@ -6,7 +7,11 @@ const Sidebar: React.FC = () => {
     <aside className="fixed top-16 left-0 h-[calc(100vh-4rem)] w-16 bg-gray-900 text-white flex flex-col items-center py-4 space-y-4">
       {/* Home Icon */}
       <div className="flex items-center justify-center w-10 h-10 hover:bg-gray-700 rounded-lg cursor-pointer">
-        <FaHome className="text-xl" />
+        <Link href={"/"}>
+          <FaHome className="text-xl" />
+        </Link>
+        
+        
       </div>
       {/* Settings Icon */}
       <div className="flex items-center justify-center w-10 h-10 hover:bg-gray-700 rounded-lg cursor-pointer">
