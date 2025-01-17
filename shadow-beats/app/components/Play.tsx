@@ -42,6 +42,9 @@ const Play = ({
         const data = await fetchSongStreams(videoId);
         setSongStreams(data);
         setVideoUrl(data.video_stream_url);
+        if(audioRef.current){
+            audioRef.current.play();
+        }
       } catch (error) {
         console.error('Error fetching stream data:', error);
       } finally {
@@ -59,6 +62,7 @@ const Play = ({
       console.error('Audio element is null');
       return;
     }
+    
 
     const handleTimeUpdate = () => {
       if(isVideoPlaying){
