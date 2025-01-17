@@ -151,6 +151,7 @@ const CurrentTrake = () => {
         setAudioCurrentTime={setAudioCurrentTime}
         isVideoPlaying={isVideoPlaying}
         videoCurrentTime={videoCurrentTime}
+        isVideo={isVideo}
       />
     </div>
   );

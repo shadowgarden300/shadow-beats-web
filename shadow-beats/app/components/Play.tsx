@@ -17,7 +17,8 @@ interface SongProp {
   setAudioIsPlaying: Function,
   setAudioCurrentTime: Function,
   isVideoPlaying:boolean,
-  videoCurrentTime:number
+  videoCurrentTime:number,
+  isVideo:boolean
   
 }
 
@@ -29,12 +30,21 @@ const Play = ({
   setAudioIsPlaying,
   setAudioCurrentTime,
   isVideoPlaying,
-  videoCurrentTime
+  videoCurrentTime,
+  isVideo
 }: SongProp) => {
   const [songStreams, setSongStreams] = useState<StreamData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   
+
+  useEffect(()=> {
+      if(!isVideo){
+          if(audioRef.current){
+            audioRef.current.play();
+          }
+      }
+  },[isVideo] )
 
   useEffect(() => {
     const fetchData = async () => {
