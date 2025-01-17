@@ -9,9 +9,19 @@ interface SongProp {
 function Song({ song }: SongProp) {
   const router = useRouter();
 
+  const resolveThumbnailUrl = () =>{
+    if(song.snippet.thumbnails.maxres) return song.snippet.thumbnails.maxres.url;
+    else if(song.snippet.thumbnails.high) return song.snippet.thumbnails.high.url;
+    else if(song.snippet.thumbnails.medium)return song.snippet.thumbnails.medium.url;
+    else if(song.snippet.thumbnails.standard) return song.snippet.thumbnails.standard.url;
+    else return song.snippet.thumbnails.default.url;
+  }
+
+  const thumbnail = resolveThumbnailUrl();
+
   const handleClick = () => {
     // Navigate to the /play page with the videoId
-    router.push(`/play?id=${song.snippet.resourceId.videoId}&title=${song.snippet.title}&thumbnail=${song.snippet.thumbnails.maxres.url}`);
+    router.push(`/play?id=${song.snippet.resourceId.videoId}&title=${song.snippet.title}&thumbnail=${thumbnail}`);
   };
 
   return (
@@ -19,7 +29,7 @@ function Song({ song }: SongProp) {
       <div key={song.id} onClick={handleClick} className="flex flex-col items-center flex-shrink-0">
         <div className="w-32 h-48 rounded-xl flex items-center justify-center mb-3">
           <img
-            src={song.snippet.thumbnails.maxres.url}
+            src={thumbnail}
             alt={song.snippet.title}
             className="w-full h-full object-cover rounded-xl"
           />

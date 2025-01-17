@@ -3,8 +3,6 @@ import Navbar from './components/NavBar';
 import Sidebar from './components/SideBar';
 import Songs from './components/Songs';
 import { fetchPlayListSongs } from './src/FetchPlayListSongs';
-import Play from './components/Play';
-
 
 
 const Home: React.FC  = async () => {

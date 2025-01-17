@@ -1,4 +1,4 @@
-import { getFromCache, setCache } from './server-cache'; // Assuming your cache logic is in a separate file
+import { getFromCache, setCache } from "./server-cache";
 
 const KEY = process.env.YOUTUBE_API_KEY;
 const maxResults = 10;
@@ -22,7 +22,6 @@ const fetchPlaylistVideos = async (playlistId: string): Promise<any[]> => {
   const data = await res.json();
   return data.items; 
 };
-
 
 const CACHE_KEY_PREFIX = 'playlist_songs_'; // Prefix for cache keys
 

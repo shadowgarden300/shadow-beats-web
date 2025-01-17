@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { fetchSongStreams } from '../src/FetchSongStreams';
-import { FaStepForward, FaPlay, FaPause } from 'react-icons/fa';
+import { FaStepForward } from 'react-icons/fa';
 
 interface StreamData {
   audio_stream_url: string;
@@ -10,22 +10,38 @@ interface StreamData {
 }
 
 interface SongProp {
-  videoId: string;
-  title: string;
-  thumbnail: string;
+  videoId: string,
+  title: string,
+  thumbnail: string,
+  setVideoUrl: Function,
+  setAudioIsPlaying: Function,
+  setAudioCurrentTime: Function,
+  isVideoPlaying:boolean,
+  videoCurrentTime:number
+  
 }
 
-const Play = ({ videoId, title, thumbnail }: SongProp) => {
+const Play = ({
+  videoId,
+  title,
+  thumbnail,
+  setVideoUrl,
+  setAudioIsPlaying,
+  setAudioCurrentTime,
+  isVideoPlaying,
+  videoCurrentTime
+}: SongProp) => {
   const [songStreams, setSongStreams] = useState<StreamData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await fetchSongStreams(videoId);
         setSongStreams(data);
+        setVideoUrl(data.video_stream_url);
       } catch (error) {
         console.error('Error fetching stream data:', error);
       } finally {
@@ -35,17 +51,48 @@ const Play = ({ videoId, title, thumbnail }: SongProp) => {
     fetchData();
   }, [videoId]);
 
+  // Attach audio event listeners
   useEffect(() => {
-    if (songStreams && audioRef.current) {
-      audioRef.current.play().catch(error => {
-        // Handle autoplay errors (e.g., browser restrictions)
-        console.error("Autoplay prevented:", error);
-        // Optionally, show a message to the user or provide a play button
-        setIsPlaying(false)
-      });
-      setIsPlaying(true); // Set isPlaying to true after successful autoplay
+    if(loading) return;
+    const audio = audioRef.current;
+    if (!audio) {
+      console.error('Audio element is null');
+      return;
     }
-  }, [songStreams]);
+
+    const handleTimeUpdate = () => {
+      if(isVideoPlaying){
+        audio.pause();
+      }
+      setAudioCurrentTime(audio.currentTime);
+      console.log(`Current Audio Time: ${audio.currentTime.toFixed(2)} seconds`);
+     
+    };
+
+    const handlePlay = () => {
+      audio.currentTime = videoCurrentTime > audio.currentTime ? videoCurrentTime:audio.currentTime;
+
+      setAudioIsPlaying(true);
+      
+    };
+
+    const handlePause = () => {
+      setAudioIsPlaying(false);
+      setAudioCurrentTime(audio.currentTime);
+    };
+
+    // Attach event listeners
+    audio.addEventListener('timeupdate', handleTimeUpdate);
+    audio.addEventListener('play', handlePlay);
+    audio.addEventListener('pause', handlePause);
+
+    // Cleanup event listeners on unmount
+    return () => {
+      audio.removeEventListener('timeupdate', handleTimeUpdate);
+      audio.removeEventListener('play', handlePlay);
+      audio.removeEventListener('pause', handlePause);
+    };
+  }, [loading,isVideoPlaying,videoCurrentTime]);
 
   if (loading) {
     return (
@@ -64,13 +111,9 @@ const Play = ({ videoId, title, thumbnail }: SongProp) => {
   }
 
   const truncateTitle = (title: string, maxLength: number) => {
-    if (title.length > maxLength) {
-      return title.substring(0, maxLength) + '...';
-    }
-    return title;
+    return title.length > maxLength ? `${title.substring(0, maxLength)}...` : title;
   };
 
-  
   return (
     <div className="fixed bottom-0 w-full bg-gray-900 text-white flex items-center px-4 py-3 shadow-lg">
       <div className="flex items-center space-x-3 w-1/4 min-w-[100px]">
@@ -92,7 +135,7 @@ const Play = ({ videoId, title, thumbnail }: SongProp) => {
           className="w-full h-8 bg-transparent"
           style={{ outline: 'none' }}
         >
-          <source src={songStreams.audio_stream_url} type="audio/mp4" />
+          <source src={songStreams.video_stream_url} type='audio/mp4' />
           Your browser does not support the audio tag.
         </audio>
       </div>
@@ -104,7 +147,6 @@ const Play = ({ videoId, title, thumbnail }: SongProp) => {
         >
           <FaStepForward />
         </button>
-
       </div>
     </div>
   );
