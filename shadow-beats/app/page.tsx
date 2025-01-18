@@ -14,14 +14,11 @@ const Home: React.FC  = async () => {
     <div className="bg-gray-800 text-white min-h-screen">
       <Navbar />
       <Sidebar />
-      <main className="ml-16 pt-16 px-6">
-        <Songs songs={recent} title={"Recently played"}/>
-        <Songs songs={globalHits} title={"Global Hits"}/>
-        <Songs songs={koreanHits} title={"Korean Hits"}/>
-        <Songs songs={bollywoodHits} title={"Blollywood Hits"}/> 
-        {/* <Song videoId='eVli-tstM5E' /> */}
-        
-       
+      <main className="pt-16 px-6 md:ml-16">
+        <Songs songs={recent} title={"Recently played"} />
+        <Songs songs={globalHits} title={"Global Hits"} />
+        <Songs songs={koreanHits} title={"Korean Hits"} />
+        <Songs songs={bollywoodHits} title={"Bollywood Hits"} />
       </main>
       {/* <Play videoId='eVli-tstM5E'/> */}
     </div>

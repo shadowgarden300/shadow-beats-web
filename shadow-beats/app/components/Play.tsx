@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
@@ -10,16 +11,15 @@ interface StreamData {
 }
 
 interface SongProp {
-  videoId: string,
-  title: string,
-  thumbnail: string,
-  setVideoUrl: Function,
-  setAudioIsPlaying: Function,
-  setAudioCurrentTime: Function,
-  isVideoPlaying:boolean,
-  videoCurrentTime:number,
-  isVideo:boolean
-  
+  videoId: string;
+  title: string;
+  thumbnail: string;
+  setVideoUrl: Function;
+  setAudioIsPlaying: Function;
+  setAudioCurrentTime: Function;
+  isVideoPlaying: boolean;
+  videoCurrentTime: number;
+  isVideo: boolean;
 }
 
 const Play = ({
@@ -36,15 +36,16 @@ const Play = ({
   const [songStreams, setSongStreams] = useState<StreamData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  
 
-  useEffect(()=> {
-      if(!isVideo){
-          if(audioRef.current){
-            audioRef.current.play();
-          }
+  useEffect(() => {
+    if (!isVideo) {
+      if (audioRef.current) {
+        audioRef.current.play().catch((error) => {
+          console.error("Error playing audio:", error);
+        });
       }
-  },[isVideo] )
+    }
+  }, [isVideo]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,8 +53,10 @@ const Play = ({
         const data = await fetchSongStreams(videoId);
         setSongStreams(data);
         setVideoUrl(data.video_stream_url);
-        if(audioRef.current){
-            audioRef.current.play();
+        if (audioRef.current) {
+          audioRef.current.play().catch((error) => {
+            console.error("Error playing audio:", error);
+          });
         }
       } catch (error) {
         console.error('Error fetching stream data:', error);
@@ -64,30 +67,21 @@ const Play = ({
     fetchData();
   }, [videoId]);
 
-  // Attach audio event listeners
   useEffect(() => {
-    if(loading) return;
+    if (loading || !audioRef.current) return;
+
     const audio = audioRef.current;
-    if (!audio) {
-      console.error('Audio element is null');
-      return;
-    }
-    
 
     const handleTimeUpdate = () => {
-      if(isVideoPlaying){
+      if (isVideoPlaying) {
         audio.pause();
       }
       setAudioCurrentTime(audio.currentTime);
-      console.log(`Current Audio Time: ${audio.currentTime.toFixed(2)} seconds`);
-     
     };
 
     const handlePlay = () => {
-      audio.currentTime = videoCurrentTime > audio.currentTime ? videoCurrentTime:audio.currentTime;
-
+      audio.currentTime = videoCurrentTime > audio.currentTime ? videoCurrentTime : audio.currentTime;
       setAudioIsPlaying(true);
-      
     };
 
     const handlePause = () => {
@@ -95,18 +89,16 @@ const Play = ({
       setAudioCurrentTime(audio.currentTime);
     };
 
-    // Attach event listeners
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('play', handlePlay);
     audio.addEventListener('pause', handlePause);
 
-    // Cleanup event listeners on unmount
     return () => {
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('play', handlePlay);
       audio.removeEventListener('pause', handlePause);
     };
-  }, [loading,isVideoPlaying,videoCurrentTime]);
+  }, [loading, isVideoPlaying, videoCurrentTime]);
 
   if (loading) {
     return (
@@ -149,7 +141,7 @@ const Play = ({
           className="w-full h-8 bg-transparent"
           style={{ outline: 'none' }}
         >
-          <source src={songStreams.video_stream_url} type='audio/mp4' />
+          <source src={songStreams.video_stream_url} type="audio/mp4" />
           Your browser does not support the audio tag.
         </audio>
       </div>
