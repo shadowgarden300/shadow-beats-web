@@ -2,73 +2,46 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { fetchSongStreams } from '../src/FetchSongStreams';
 import { FaStepForward } from 'react-icons/fa';
 
-interface StreamData {
-  audio_stream_url: string;
-  video_stream_url: string;
-}
-
 interface SongProp {
-  videoId: string;
+  currentTrake:StreamData,
   title: string;
   thumbnail: string;
-  setVideoUrl: Function;
   setAudioIsPlaying: Function;
   setAudioCurrentTime: Function;
   isVideoPlaying: boolean;
   videoCurrentTime: number;
   isVideo: boolean;
+  setPlayNextSong:Function;
 }
 
 const Play = ({
-  videoId,
   title,
   thumbnail,
-  setVideoUrl,
   setAudioIsPlaying,
   setAudioCurrentTime,
   isVideoPlaying,
   videoCurrentTime,
-  isVideo
+  isVideo,
+  currentTrake,
+  setPlayNextSong
 }: SongProp) => {
-  const [songStreams, setSongStreams] = useState<StreamData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (!isVideo) {
       if (audioRef.current) {
+        audioRef.current.load();
         audioRef.current.play().catch((error) => {
-          console.error("Error playing audio:", error);
+         // console.error("Error playing audio:", error);
         });
       }
     }
-  }, [isVideo]);
+  }, [isVideo,currentTrake]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetchSongStreams(videoId);
-        setSongStreams(data);
-        setVideoUrl(data.video_stream_url);
-        if (audioRef.current) {
-          audioRef.current.play().catch((error) => {
-            console.error("Error playing audio:", error);
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching stream data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [videoId]);
-
-  useEffect(() => {
-    if (loading || !audioRef.current) return;
+    if (!audioRef.current) return;
 
     const audio = audioRef.current;
 
@@ -77,8 +50,12 @@ const Play = ({
         audio.pause();
       }
       setAudioCurrentTime(audio.currentTime);
-    };
 
+    };
+    const handleAudioEnd = () => {
+      setPlayNextSong(true); // Trigger next song when audio ends
+    };
+  
     const handlePlay = () => {
       audio.currentTime = videoCurrentTime > audio.currentTime ? videoCurrentTime : audio.currentTime;
       setAudioIsPlaying(true);
@@ -88,7 +65,7 @@ const Play = ({
       setAudioIsPlaying(false);
       setAudioCurrentTime(audio.currentTime);
     };
-
+    audio.addEventListener('ended', handleAudioEnd);
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('play', handlePlay);
     audio.addEventListener('pause', handlePause);
@@ -97,18 +74,12 @@ const Play = ({
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('play', handlePlay);
       audio.removeEventListener('pause', handlePause);
+      audio.removeEventListener('ended', handleAudioEnd);
     };
-  }, [loading, isVideoPlaying, videoCurrentTime]);
+  }, [isVideoPlaying,videoCurrentTime,currentTrake]);
 
-  if (loading) {
-    return (
-      <div className="fixed bottom-0 w-full bg-gray-900 text-white py-4 text-center">
-        <p>Loading...</p>
-      </div>
-    );
-  }
 
-  if (!songStreams) {
+  if (!currentTrake) {
     return (
       <div className="fixed bottom-0 w-full bg-gray-900 text-white py-4 text-center">
         <p>No stream data available</p>
@@ -141,7 +112,7 @@ const Play = ({
           className="w-full h-8 bg-transparent"
           style={{ outline: 'none' }}
         >
-          <source src={songStreams.video_stream_url} type="audio/mp4" />
+          <source src={currentTrake.video_stream_url} type="audio/mp4" />
           Your browser does not support the audio tag.
         </audio>
       </div>
@@ -149,7 +120,7 @@ const Play = ({
       <div className="flex items-center w-1/6 min-w-[80px]">
         <button
           className="text-white text-2xl hover:text-gray-400"
-          onClick={() => console.log('Next song functionality')}
+          onClick={() => setPlayNextSong(true)}
         >
           <FaStepForward />
         </button>

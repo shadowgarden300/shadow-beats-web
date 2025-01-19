@@ -2,8 +2,9 @@ import React from 'react';
 import Navbar from '../components/NavBar';
 import Sidebar from '../components/SideBar';
 import { fetchSearchResults } from '../src/FetchSearchResults';
-import { convertSearchItemsToPlaylistItems, SearchItem } from '../interfaces/SearchItem';
-import Song from '../components/Song'; // Reusable Song component
+import {SearchItem } from '../interfaces/SearchItem';
+import { convertSearchItemsToSongs } from '../interfaces/Song';
+import Song from '../components/Song';
 
 interface Props {
   searchParams: { query?: string }; // This is injected by Next.js
@@ -34,7 +35,7 @@ const SearchItems: React.FC<Props> = async ({ searchParams }) => {
     }
 
     // Convert SearchItems to PlaylistItems
-    const playListItems = convertSearchItemsToPlaylistItems(searchResults);
+    const songs = convertSearchItemsToSongs(searchResults);
 
     return (
       <div className="bg-gray-800 text-white min-h-screen">
@@ -44,7 +45,7 @@ const SearchItems: React.FC<Props> = async ({ searchParams }) => {
           <h1 className="text-2xl font-bold mb-4">Search Results for "{query}"</h1>
           {/* List Layout for Songs */}
           <div className="flex flex-col space-y-4">
-            {playListItems.map((song) => (
+            {songs.map((song) => (
               <Song key={song.id} song={song} layout="list" />
             ))}
           </div>

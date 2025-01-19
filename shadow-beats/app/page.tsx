@@ -10,15 +10,16 @@ const Home: React.FC  = async () => {
   const bollywoodHits = await fetchPlayListSongs("Bollywood+Hitlist");
   const koreanHits = await fetchPlayListSongs("K-HITLIST");
   const recent = (await fetchPlayListSongs("The+Hit+List")).slice(0,3);
+
   return (
     <div className="bg-gray-800 text-white min-h-screen">
       <Navbar />
       <Sidebar />
       <main className="pt-16 px-6 md:ml-16">
-        <Songs songs={recent} title={"Recently played"} />
-        <Songs songs={globalHits} title={"Global Hits"} />
-        <Songs songs={koreanHits} title={"Korean Hits"} />
-        <Songs songs={bollywoodHits} title={"Bollywood Hits"} />
+        <Songs playListSongs={recent} title={"Recently played"} />
+        <Songs playListSongs={globalHits} title={"Global Hits"} />
+        <Songs playListSongs={koreanHits} title={"Korean Hits"} />
+        <Songs playListSongs={bollywoodHits} title={"Bollywood Hits"} />
       </main>
       {/* <Play videoId='eVli-tstM5E'/> */}
     </div>

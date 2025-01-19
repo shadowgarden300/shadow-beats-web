@@ -1,28 +1,19 @@
 'use client';
 import { useRouter } from 'next/navigation'; // Using Next.js's useRouter for client-side navigation
 import React from 'react';
+import { SongItem } from '../interfaces/Song';
 
 interface SongProp {
-  song: PlaylistItem;
+  song: SongItem;
   layout?: 'grid' | 'list'; // Supports grid or list layout
 }
 
 function Song({ song, layout = 'grid' }: SongProp) {
   const router = useRouter();
 
-  const resolveThumbnailUrl = () => {
-    if (song.snippet.thumbnails.maxres) return song.snippet.thumbnails.maxres.url;
-    else if (song.snippet.thumbnails.high) return song.snippet.thumbnails.high.url;
-    else if (song.snippet.thumbnails.medium) return song.snippet.thumbnails.medium.url;
-    else if (song.snippet.thumbnails.standard) return song.snippet.thumbnails.standard.url;
-    else return song.snippet.thumbnails.default.url;
-  };
-
-  const thumbnail = resolveThumbnailUrl();
-
   const handleClick = () => {
     // Navigate to the /play page with the videoId
-    router.push(`/play?id=${song.snippet.resourceId.videoId}&title=${song.snippet.title}&thumbnail=${thumbnail}`);
+    router.push(`/play?id=${song.id}&title=${song.title}&thumbnail=${song.thumbnail}&playListId=${song.playListId}`);
   };
 
   return (
@@ -39,8 +30,8 @@ function Song({ song, layout = 'grid' }: SongProp) {
         } rounded-lg overflow-hidden`}
       >
         <img
-          src={thumbnail}
-          alt={song.snippet.title}
+          src={song.thumbnail}
+          alt={song.title}
           className="w-full h-full object-cover"
         />
       </div>
@@ -51,7 +42,7 @@ function Song({ song, layout = 'grid' }: SongProp) {
           layout === 'list' ? 'flex-grow text-base' : 'text-center font-small w-32'
         } overflow-hidden text-ellipsis`}
       >
-        {song.snippet.title
+        {song.title
           .replace(/\(Official Video\)/gi, '')
           .replace(/\(Official Music Video\)/gi, '')
           .replace(/\(Official Lyric Video\)/gi, '')
