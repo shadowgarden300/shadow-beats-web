@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-const CACHE_DIR = path.resolve(__dirname, 'cache'); // Path to the cache directory
+export const CACHE_DIR = path.resolve('./', 'cache'); // Path to the cache directory
 
 // In-memory cache (for fast lookups)
 export const memoryCache = new Map<string, { data: any; expiry: number }>();
@@ -22,6 +22,7 @@ export const writeCacheToFile = () => {
 };
 
 export const getFromCache = <T>(key: string): T | null => {
+  console.log(`Cache directory: ${CACHE_DIR}`);
   const cachedData = memoryCache.get(key);
 
   if (cachedData) {

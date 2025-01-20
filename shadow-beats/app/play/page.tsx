@@ -16,7 +16,7 @@ const CurrentTrake = () => {
   const [thumbnail, setThumbnail] = useState<string | null>(
     searchParams.get('thumbnail')
   );
-  const [playListId, setPlayListId] = useState<string | null>(
+  const [playListId, setPlayListId] = useState<string|null>(
     searchParams.get('playListId')
   );
 
@@ -32,7 +32,7 @@ const CurrentTrake = () => {
   const [isVideoPlaying, setIsVideoPlaying] = useState<boolean>(false);
   const [videoCurrentTime, setVideoCurrentTime] = useState<number>(0);
   const [isVideo, setIsVideo] = useState<boolean>(false);
-
+  
   useEffect(() => {
     const fetchData = async () => {
       if (videoId) {
@@ -54,7 +54,10 @@ const CurrentTrake = () => {
     if (nextSong) {
       setCurrentTrake(nextSong.songStream);
       if (videoRef.current) {
+        
         videoRef.current.load();
+        setVideoCurrentTime(0);
+        setAudioCurrentTime(0);
 
       }
       setIsVideo(false);
@@ -199,6 +202,7 @@ const CurrentTrake = () => {
           playNextSong={playNextSong}
           setNextSong={setNextSong}
           isMobileQueueVisible = {isMobileQueueVisible}
+          setLoading={setLoading}
         />
         
       </div>
@@ -212,6 +216,14 @@ const CurrentTrake = () => {
     ) : (
       currentTrake && (
         <Play
+          song={
+            {
+              id:videoId,
+              thumbnail:thumbnail,
+              playListId:playListId?playListId:"",
+              title:title
+            }
+          }
           setPlayNextSong={setPlayNextSong}
           currentTrake={currentTrake}
           title={title}

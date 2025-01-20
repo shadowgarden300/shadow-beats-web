@@ -11,9 +11,10 @@ interface Props {
   setNextSong: Function;
   playNextSong: boolean;
   isMobileQueueVisible: boolean;
+  setLoading:Function;
 }
 
-const Queue = ({ playListId, currentSongId, setNextSong, playNextSong, isMobileQueueVisible }: Props) => {
+const Queue = ({ playListId, currentSongId, setNextSong, playNextSong, isMobileQueueVisible, setLoading }: Props) => {
   const [queue, setQueue] = useState<SongItem[]>([]);
   const [preloadedStreams, setPreloadedStreams] = useState<Map<string, StreamData>>(new Map());
 
@@ -96,6 +97,7 @@ const Queue = ({ playListId, currentSongId, setNextSong, playNextSong, isMobileQ
     // When a song is clicked, fetch the stream data and set it as the next song
     const streamData = await fetchSongStreams(song.id);
     setNextSong({ songItem: song, songStream: streamData });
+    setLoading(true)
   };
 
   return (

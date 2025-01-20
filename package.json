@@ -2,6 +2,7 @@
   "dependencies": {
     "clsx": "^2.1.1",
     "react-player": "^2.16.0",
+    "react-toastify": "^11.0.3",
     "ytdl-core": "^4.11.5"
   }
 }

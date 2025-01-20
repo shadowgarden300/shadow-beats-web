@@ -1,8 +1,9 @@
 
 'use client';
-
+import { toast } from 'react-toastify';
 import React, { useEffect, useState, useRef } from 'react';
-import { FaStepForward } from 'react-icons/fa';
+import { FaStepForward, FaThumbsUp } from 'react-icons/fa';
+import { SongItem } from '../interfaces/Song';
 
 interface SongProp {
   currentTrake:StreamData,
@@ -14,6 +15,7 @@ interface SongProp {
   videoCurrentTime: number;
   isVideo: boolean;
   setPlayNextSong:Function;
+  song:SongItem;
 }
 
 const Play = ({
@@ -25,6 +27,7 @@ const Play = ({
   videoCurrentTime,
   isVideo,
   currentTrake,
+  song,
   setPlayNextSong
 }: SongProp) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -39,6 +42,36 @@ const Play = ({
       }
     }
   }, [isVideo,currentTrake]);
+
+  async function addToLikedSongs(song:SongItem){
+    try {
+      const response = await fetch('/api/addToPlayList', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          playListId:'liked_songs_user_playlist',
+          song,
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        console.error('Failed to add song to playlist:', data.error);
+        return { success: false, error: data.error };
+      }
+  
+      console.log('Song added to playlist successfully:', data.message);
+      return { success: true, message: data.message };
+    } catch (error) {
+      console.error('Error calling addToPlayList API:', error);
+      return { success: false, error: 'An unexpected error occurred' };
+    }finally{
+      toast.info(`"${song.title}" added to liked songs.`, { autoClose: 3000 }); 
+    }
+  }
 
   useEffect(() => {
     if (!audioRef.current) return;
@@ -123,6 +156,12 @@ const Play = ({
           onClick={() => setPlayNextSong(true)}
         >
           <FaStepForward />
+        </button>
+        <button 
+          className="text-white text-2xl p-2 hover:text-gray-400"
+          onClick={() => addToLikedSongs(song)}
+        >
+          <FaThumbsUp />
         </button>
       </div>
     </div>
