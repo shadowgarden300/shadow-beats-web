@@ -36,6 +36,7 @@ const Play = ({
     if (!isVideo) {
       if (audioRef.current) {
         audioRef.current.load();
+        audioRef.current.currentTime=0;
         audioRef.current.play().catch((error) => {
          // console.error("Error playing audio:", error);
         });
@@ -45,7 +46,7 @@ const Play = ({
 
   async function addToLikedSongs(song:SongItem){
     try {
-      const response = await fetch('/api/addToPlayList', {
+      const response = await fetch('/api/playListManager/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -64,12 +65,11 @@ const Play = ({
       }
   
       console.log('Song added to playlist successfully:', data.message);
+      toast.info(`"${song.title}" added to liked songs.`, { autoClose: 3000 }); 
       return { success: true, message: data.message };
     } catch (error) {
       console.error('Error calling addToPlayList API:', error);
       return { success: false, error: 'An unexpected error occurred' };
-    }finally{
-      toast.info(`"${song.title}" added to liked songs.`, { autoClose: 3000 }); 
     }
   }
 

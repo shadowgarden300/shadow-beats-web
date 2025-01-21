@@ -40,14 +40,17 @@ export const getFromCache = <T>(key: string): T | null => {
     const fileContent = fs.readFileSync(cacheFilePath, 'utf-8');
     const parsedCache = JSON.parse(fileContent);
 
-    if (key.includes('user_playlist') || parsedCache.expiry > Date.now()) {
+    if (key.includes('user_playlist') ) {
       console.log(`Cache hit (file) for ${key}`);
       memoryCache.set(key, parsedCache); // Store in memory for future requests
       return parsedCache.data;
-    } else {
+    } else if(parsedCache.expiry > Date.now()) {
+        memoryCache.set(key, parsedCache); // Store in memory for future requests
+        return parsedCache.data;
+      }else{
+        fs.unlinkSync(cacheFilePath);
+      }
       // If cache expired, delete the file
-      fs.unlinkSync(cacheFilePath);
-    }
   }
 
   return null; // Cache miss
@@ -57,7 +60,7 @@ export const getFromCache = <T>(key: string): T | null => {
 export const setCache = <T>(key: string, data: T): void => {
   const cacheEntry = {
     data,
-    expiry: Date.now() + CACHE_DURATION, // Cache duration of 24 hours
+    expiry: key.includes("user_playlist") ? Infinity : Date.now() + CACHE_DURATION,
   };
 
   // Store in memory

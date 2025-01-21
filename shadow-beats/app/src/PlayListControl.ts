@@ -1,27 +1,28 @@
 import path from "path";
+import fs from "fs";
 import { SongItem } from "../interfaces/Song";
 import { fetchPlayListSongs } from "./FetchPlayListSongs";
-import fs from "fs";
-import { CACHE_DIR } from "./server-cache";
 
-
-// Ensure the cache directory exists
+const CACHE_DIR = path.resolve('./', 'cache');
 if (!fs.existsSync(CACHE_DIR)) {
   fs.mkdirSync(CACHE_DIR);
 }
 
 export async function addToPlayList(name: string, song: SongItem): Promise<void> {
-  // Fetch the current liked songs or initialize an empty array
-  const likedSongs: PlaylistItem[] = await fetchPlayListSongs(name);
+  const playlistFilePath = path.join(CACHE_DIR, `${name}.json`);
+  let existingData: { data: PlaylistItem[]; expiry: number | null } = { data: [], expiry: null };
 
-  // Check if the song is already in the playlist
+  if (fs.existsSync(playlistFilePath)) {
+    const fileContent = fs.readFileSync(playlistFilePath, "utf-8");
+    existingData = JSON.parse(fileContent);
+  }
+
+  const likedSongs: PlaylistItem[] = existingData.data;
   const songExists = likedSongs.some((item) => item.snippet.resourceId.videoId === song.id);
   if (songExists) {
-    console.log(`Song "${song.title}" is already in the playlist "${name}".`);
     return;
   }
 
-  // Convert SongItem to PlaylistItem
   const newPlaylistItem: PlaylistItem = {
     id: song.id,
     snippet: {
@@ -48,29 +49,63 @@ export async function addToPlayList(name: string, song: SongItem): Promise<void>
     },
   };
 
-  // Add the new playlist item
   likedSongs.push(newPlaylistItem);
 
-  // Write the updated playlist back to the file
-  const playlistFilePath = path.join(CACHE_DIR, `${name}.json`);
-  fs.writeFileSync(playlistFilePath, JSON.stringify(likedSongs, null, 2), "utf-8");
-  console.log(`Song "${song.title}" has been added to the playlist "${name}".`);
+  const updatedData = {
+    data: likedSongs,
+    expiry: null,
+  };
+
+  fs.writeFileSync(playlistFilePath, JSON.stringify(updatedData, null, 2), "utf-8");
 }
 
 export async function removeFromPlayList(name: string, songId: string): Promise<void> {
-  // Fetch the current liked songs or initialize an empty array
-  const likedSongs: PlaylistItem[] = await fetchPlayListSongs(name);
+  const playlistFilePath = path.join(CACHE_DIR, `${name}.json`);
+  let existingData: { data: PlaylistItem[]; expiry: number | null } = { data: [], expiry: null };
 
-  // Filter out the song to be removed
+  if (fs.existsSync(playlistFilePath)) {
+    const fileContent = fs.readFileSync(playlistFilePath, "utf-8");
+    existingData = JSON.parse(fileContent);
+  }
+
+  const likedSongs: PlaylistItem[] = existingData.data;
   const updatedSongs = likedSongs.filter((item) => item.snippet.resourceId.videoId !== songId);
 
   if (updatedSongs.length === likedSongs.length) {
-    console.log(`Song with ID "${songId}" was not found in the playlist "${name}".`);
     return;
   }
 
-  // Write the updated playlist back to the file
-  const playlistFilePath = path.join(CACHE_DIR, `${name}.json`);
-  fs.writeFileSync(playlistFilePath, JSON.stringify(updatedSongs, null, 2), "utf-8");
-  console.log(`Song with ID "${songId}" has been removed from the playlist "${name}".`);
+  const updatedData = {
+    data: updatedSongs,
+    expiry: existingData.expiry,
+  };
+
+  fs.writeFileSync(playlistFilePath, JSON.stringify(updatedData, null, 2), "utf-8");
+}
+
+export function fetchUserPlayLists() {
+  try {
+    const files = fs.readdirSync(CACHE_DIR);
+    const matchingFiles = files.filter((file) => file.includes('user_playlist'));
+    return matchingFiles;
+  } catch (error) {
+    return [];
+  }
+}
+
+export function rearrangeSongs(name: string, songs: SongItem[]): void {
+  const filePath = path.join(CACHE_DIR, `${name}.json`);
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`Playlist "${name}" does not exist.`);
+  }
+
+  const fileContent = fs.readFileSync(filePath, "utf-8");
+  const existingData: { data: PlaylistItem[]; expiry: number | null } = JSON.parse(fileContent);
+
+  const updatedData = {
+    data: songs,
+    expiry: existingData.expiry,
+  };
+
+  fs.writeFileSync(filePath, JSON.stringify(updatedData, null, 2), "utf-8");
 }

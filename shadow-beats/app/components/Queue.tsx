@@ -23,7 +23,7 @@ const Queue = ({ playListId, currentSongId, setNextSong, playNextSong, isMobileQ
     const fetchQueue = async () => {
       if (!playListId) return;
       try {
-        const response = await fetch(`/api/getPlayListSongs?playListId=${playListId}`);
+        const response = await fetch(`/api/playListManager/get?playListId=${playListId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch playlist songs');
         }

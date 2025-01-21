@@ -19,7 +19,10 @@ const Sidebar: React.FC = () => {
       </div>
       {/* List Icon */}
       <div className="flex items-center justify-center w-10 h-10 hover:bg-gray-700 rounded-lg cursor-pointer">
-        <FaList className="text-xl" />
+        <Link href={"/playlists"}>
+            <FaList className="text-xl" />
+        </Link>
+        
       </div>
       {/* Add Icon */}
       <div className="flex items-center justify-center w-10 h-10 hover:bg-gray-700 rounded-lg cursor-pointer">
