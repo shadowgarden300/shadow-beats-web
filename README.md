@@ -44,8 +44,8 @@ Shadow Beats Web is built with Next.js. Follow these steps to run the applicatio
 
 1. Clone the repository:
    ```sh
-   git clone <repository_url>
-   cd shadow-beats-web
+   git clone https://github.com/shadowgarden300/shadow-beats-web/
+   cd shadow-beats
    ```
 2. Install dependencies:
    ```sh
