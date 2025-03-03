@@ -46,7 +46,8 @@ function resolveUrl (thumbnails:Thumbnail):string{
     else if (thumbnails.high) return thumbnails.high.url;
     else if (thumbnails.medium) return thumbnails.medium.url;
     else if (thumbnails.standard) return thumbnails.standard.url;
-    else return thumbnails.default.url;
+    else if (thumbnails.default) return thumbnails.default.url;
+    else return "/not-found.jpeg"
 }
 export function convertSearchItemsToSongs(searchItems:SearchItem[]):SongItem[]{
     return searchItems.map((searchItem) => {
