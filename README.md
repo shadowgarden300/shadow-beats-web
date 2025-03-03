@@ -1,6 +1,6 @@
 # Shadow Beats Web
 
-Shadow Beats Web is open source modern music streaming application designed to offer a seamless and enjoyable listening experience. it allows users to discover trending tracks, curate personal playlists, and enjoy uninterrupted playback. The app is built for effortless navigation and smooth performance.
+Shadow Beats Web is a open source modern music streaming application designed to offer a seamless and enjoyable listening experience. it allows users to discover trending tracks, curate personal playlists, and enjoy uninterrupted playback. The app is built for effortless navigation and smooth performance.
 
 ## Features
 
