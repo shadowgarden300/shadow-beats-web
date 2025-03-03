@@ -20,15 +20,15 @@ Shadow Beats Web is open source modern music streaming application designed to o
 ## Screenshots
 
 #### home 
-![home page](image.png) 
+![home page](shadow-beats/public/image.png) 
 #### song/video playback
-![playback page](image-1.png)
+![playback page](shadow-beats/public/image-1.png)
 #### search
-![search](image-4.png)
+![search](shadow-beats/public/image-4.png)
 #### playlists
-![playlists](image-2.png)
+![playlists](shadow-beats/public/image-2.png)
 #### Saved songs
-![saved songs](image-3.png)
+![saved songs](shadow-beats/public/image-3.png)
 ### Upcoming Features
 
 - Improved song recommendations
